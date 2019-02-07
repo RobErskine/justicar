@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <title>Justicar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="referrer" content="origin-when-cross-origin" />
+</head>
+<body class="ltr">
+    <form>
+        <label for="zipcode">
+            Your zipcode:
+        </label>
+        <input id="zipcode" type="number" placeholder="08244" name="zipcode">
+    </form>
+    {% set zipcode = craft.app.request.getParam('zipcode') %}
+    {% if zipcode %}
+        {% set params = {
+            url: 'https://www.googleapis.com/civicinfo/v2/representatives?&key=' ~ getenv('GOOGLE_API_KEY') ~ '&address=' ~ zipcode,
+            type: 'json',
+        } %}
+        
+        {% set feed = craft.feedme.feed(params) %}
+
+        {{feed|length}}
+        {% for node in feed %}
+            Name: {{ node.name }}
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
